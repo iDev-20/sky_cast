@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sky_cast/resources/app_images.dart';
 
 const kTempTextStyle = TextStyle(
   fontFamily: 'Spartan MB',
@@ -29,13 +30,14 @@ const kIconColor = Colors.white;
 final kTextFieldInputDecoration = InputDecoration(
   contentPadding: const EdgeInsets.all(8),
   filled: true,
-  fillColor: Colors.white,
-  icon: const Icon(
-    Icons.location_city,
-    color: Colors.white,
+  fillColor: const Color(0x1FFFFFFF),
+  prefixIcon: Padding(
+    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+    child: AppImages.svgSearchIcon,
   ),
-  hintText: 'Enter City Name',
-  hintStyle: const TextStyle(color: Colors.grey),
+  prefixIconColor: const Color(0x99EBEBF5),
+  hintText: 'Search for a city or airport',
+  hintStyle: const TextStyle(color: Color(0x99EBEBF5)),
   border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
 );

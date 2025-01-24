@@ -12,7 +12,6 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  
   @override
   void initState() {
     super.initState();
@@ -25,14 +24,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
     Navigation.navigateToScreen(
         context: context,
         screen: HomePage(
-          // locationWeather: weatherData,
+          locationWeather: weatherData,
         ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      backgroundColor: Colors.grey[900],
+      body: const Center(
         child: SpinKitChasingDots(
           color: Colors.white,
           size: 100.0,

@@ -38,11 +38,11 @@ flutter:
       fonts:
         - asset: assets/fonts/Urbanist-Medium.ttf
 
-    - family: Inter_28pt
+    - family: Inter_18pt
       fonts:
-        - asset: assets/fonts/Inter_28pt-Regular.ttf
+        - asset: assets/fonts/Inter_18pt-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Inter_28pt-Medium.ttf
+        - asset: assets/fonts/Inter_18pt-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Inter_28pt-SemiBold.ttf
+        - asset: assets/fonts/Inter_18pt-SemiBold.ttf
           weight: 600
