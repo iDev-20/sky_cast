@@ -1,23 +1,38 @@
-import 'dart:ui';
+// ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:sky_cast/extensions/date_time_extensions.dart';
 import 'package:sky_cast/resources/app_images.dart';
 import 'package:sky_cast/screens/details_screen.dart';
+import 'package:sky_cast/screens/loading_screen.dart';
+import 'package:sky_cast/services/weather.dart';
 import 'package:sky_cast/utilis/navigation.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, this.locationWeather});
+  const HomePage({super.key, this.locationWeather, this.hourlyForecastData});
 
   final locationWeather;
+  final hourlyForecastData;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  bool showSpinner = false;
   String? cityName;
   String? countryName;
+  int? temperature;
+  int? windSpeed;
+  String? weatherDescription;
+  int? hourlyForecastTemperature;
+  int? humidity;
+  int? pressure;
+  int? maxTemperature;
+  int? minTemperature;
+  int? seaLevel;
 
   @override
   void initState() {
@@ -27,8 +42,28 @@ class _HomePageState extends State<HomePage> {
 
   void updateUI(dynamic weatherData) {
     setState(() {
+      double temp = weatherData['main']['temp'];
+      temperature = temp.toInt();
+
+      pressure = weatherData['main']['pressure'];
+      humidity = weatherData['main']['humidity'];
+      double minTemp = weatherData['main']['temp_min'];
+      minTemperature = minTemp.toInt();
+      double maxTemp = weatherData['main']['temp_max'];
+      maxTemperature = maxTemp.toInt();
+      seaLevel = weatherData['main']['sea_level'];
+
       countryName = weatherData['sys']['country'];
+
       cityName = weatherData['name'];
+
+      double speed = weatherData['wind']['speed'];
+      windSpeed = speed.toInt();
+
+      weatherDescription = weatherData['weather'][0]['description'];
+
+      // double hourlyForecastTemp = hourlyForecastData['list']['main']['temp'];
+      // hourlyForecastTemperature = hourlyForecastTemp.toInt();
     });
   }
 
@@ -46,195 +81,265 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AppImages.rainyBackgroundImage, fit: BoxFit.cover),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, top: 78, right: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              AppImages.svgLocationIcon,
-                              const SizedBox(width: 12),
-                              Text(
-                                '$cityName, $countryName',
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Urbanist',
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                              onTap: () {
-                                Navigation.navigateToScreen(
-                                    context: context,
-                                    screen: const DetailsScreen());
-                              },
-                              child:
-                                  const Icon(Icons.menu, color: Colors.white))
-                        ],
-                      ),
-                      const SizedBox(height: 29),
-                      const Text(
-                        'Today, Oct 18 5:10',
-                        style: TextStyle(
-                            color: Colors.white, fontFamily: 'Urbanist'),
-                      ),
-                      const SizedBox(height: 22),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: '16',
-                                  style: TextStyle(
-                                      fontFamily: 'Inter_18pt',
-                                      color: Colors.white,
-                                      fontSize: 128,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                WidgetSpan(
-                                  child: Transform.translate(
-                                    offset: const Offset(0.0, -57.0),
-                                    child: const Text(
-                                      '°C',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              const RotatedBox(
-                                quarterTurns: 3,
-                                child: Text(
-                                  'Mostly Rain',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16.0),
-                                ),
-                              ),
-                              const SizedBox(height: 4.0),
-                              AppImages.svgCloudDrizzle,
-                            ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 82),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 33.0),
-                        decoration: BoxDecoration(
-                            color: const Color(0x1FFFFFFF),
-                            borderRadius: BorderRadius.circular(32),
-                            border: Border.all(
-                              color: const Color(0xFFD9D9D9),
-                            )),
-                        child: Row(
+        body: ModalProgressHUD(
+          inAsyncCall: showSpinner,
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AppImages.rainyBackgroundImage,
+                        fit: BoxFit.cover),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20.0, top: 78, right: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            row(
-                                statusIcon: AppImages.svgDrizzle,
-                                status: '23:00'),
-                            line(),
-                            row(
-                                statusIcon: AppImages.svgWind,
-                                status: '14km/h'),
-                            line(),
-                            row(statusIcon: AppImages.svgSun, status: 'UV'),
+                            GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  showSpinner = true;
+                                });
+                                // Navigation.navigateToScreen(
+                                //     context: context,
+                                //     screen: const LoadingScreen());
+                                var weatherData =
+                                    await WeatherModel().getLocationWeather();
+                                updateUI(weatherData);
+                                setState(() {
+                                  showSpinner = false;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  AppImages.svgLocationIcon,
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    '$cityName, $countryName',
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Urbanist',
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                                onTap: () {
+                                  Navigation.navigateToScreen(
+                                      context: context,
+                                      screen: const DetailsScreen());
+                                },
+                                child:
+                                    const Icon(Icons.menu, color: Colors.white))
                           ],
                         ),
-                      )
-                    ],
+                        const SizedBox(height: 29),
+                        Text(
+                          'Today, ${DateTime.now().myCustomDateTime()}',
+                          style: const TextStyle(
+                              color: Colors.white, fontFamily: 'Urbanist'),
+                        ),
+                        const SizedBox(height: 22),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: '$temperature',
+                                    style: const TextStyle(
+                                        fontFamily: 'Inter_18pt',
+                                        color: Colors.white,
+                                        fontSize: 128,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  WidgetSpan(
+                                    child: Transform.translate(
+                                      offset: const Offset(0.0, -57.0),
+                                      child: const Text(
+                                        '°C',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 40,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                RotatedBox(
+                                  quarterTurns: 3,
+                                  child: Text(
+                                    '$weatherDescription',
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 16.0),
+                                  ),
+                                ),
+                                const SizedBox(height: 4.0),
+                                AppImages.svgCloudDrizzle,
+                              ],
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 15.0),
+                          decoration: BoxDecoration(
+                              color: const Color(0x1FFFFFFF),
+                              borderRadius: BorderRadius.circular(32),
+                              border: Border.all(
+                                color: const Color(0xFFD9D9D9),
+                              )),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  singleParameter(
+                                      statusIcon: const Icon(
+                                        Iconsax.wind_25,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),
+                                      status: '${windSpeed}m/s',
+                                      statusTitle: 'Wind'),
+                                  singleParameter(
+                                      statusIcon: const Icon(
+                                        Iconsax.sun_15,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),
+                                      status: '$maxTemperature°C',
+                                      statusTitle: 'Max'),
+                                  singleParameter(
+                                      statusIcon: const Icon(
+                                        Iconsax.sun_1,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),
+                                      status: '$minTemperature°C',
+                                      statusTitle: 'Min'),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              line(),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  singleParameter(
+                                      statusIcon: const Icon(
+                                        Iconsax.drop3,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),
+                                      status: '$humidity%',
+                                      statusTitle: 'Humidity'),
+                                  singleParameter(
+                                      statusIcon: AppImages.svgWind,
+                                      status: '${pressure}hPa',
+                                      statusTitle: 'Pressure'),
+                                  singleParameter(
+                                      statusIcon: const Icon(
+                                        Iconsax.chart_35,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),
+                                      status: '${seaLevel}m',
+                                      statusTitle: 'Sea-Level'),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 42.0),
-            Container(
-              height: 267,
-              padding: const EdgeInsets.only(
-                  left: 14, top: 51, right: 19, bottom: 29),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AppImages.bottomContainerBackgroundImage,
-                    fit: BoxFit.fill),
+              // const SizedBox(height: 5.0),
+              Container(
+                height: 267,
+                padding: const EdgeInsets.only(
+                    left: 14, top: 51, right: 19, bottom: 29),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AppImages.bottomContainerBackgroundImage,
+                      fit: BoxFit.fill),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Hourly Forecast',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Inter_28pt',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 23),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6.0),
+                          child:
+                              hourlyForecast(weatherIcon: AppImages.svgSunBig),
+                        ),
+                        hourlyForecast(weatherIcon: AppImages.svgCloudSunny),
+                        hourlyForecast(
+                            weatherIcon: AppImages.svgCloudDrizzleBlue),
+                        hourlyForecast(
+                            weatherIcon: AppImages.svgCloudLightning),
+                      ],
+                    )
+                  ],
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Hourly Forecast',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Inter_28pt',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 23),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 6.0),
-                        child: hourlyForecast(weatherIcon: AppImages.svgSunBig),
-                      ),
-                      hourlyForecast(weatherIcon: AppImages.svgCloudSunny),
-                      hourlyForecast(
-                          weatherIcon: AppImages.svgCloudDrizzleBlue),
-                      hourlyForecast(weatherIcon: AppImages.svgCloudLightning),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget row({required SvgPicture statusIcon, required String status}) {
+  Widget singleParameter(
+      {required Widget statusIcon,
+      required String status,
+      required String statusTitle}) {
     return SizedBox(
       child: Column(
         children: [
-          Row(
-            children: [
-              statusIcon,
-              const SizedBox(width: 7.0),
-              Text(
-                status,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          statusIcon,
+          const SizedBox(height: 5.0),
+          Text(
+            status,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(height: 8.0),
-          const Text(
-            'Slight chance \nof rain',
-            style: TextStyle(color: Colors.white, fontSize: 10.0),
+          const SizedBox(height: 4.0),
+          Text(
+            statusTitle,
+            style: const TextStyle(color: Colors.white, fontSize: 14.0),
             textAlign: TextAlign.center,
           ),
         ],
@@ -244,15 +349,15 @@ class _HomePageState extends State<HomePage> {
 
   Widget line() {
     return Container(
-      height: 32,
-      width: 1,
+      height: 1,
+      width: double.infinity,
       decoration: BoxDecoration(
           color: const Color(0xFFD9D9D9),
           borderRadius: BorderRadius.circular(999)),
     );
   }
 
-  Widget hourlyForecast({required SvgPicture weatherIcon}) {
+  Widget hourlyForecast({required Widget weatherIcon}) {
     return Container(
       color: Colors.transparent,
       child: Column(
@@ -276,7 +381,8 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 9.0),
           const Text(
-            '23°C',
+            '°C',
+            //$hourlyForecastTemperature
             style: TextStyle(
                 color: Colors.black,
                 fontSize: 16.0,

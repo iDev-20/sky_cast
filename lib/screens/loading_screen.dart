@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sky_cast/screens/home_screen.dart';
@@ -12,6 +14,8 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  bool? showSpinner;
+
   @override
   void initState() {
     super.initState();
@@ -20,11 +24,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void getLocationData() async {
     var weatherData = await WeatherModel().getLocationWeather();
+    // var hourlyForecastData = await WeatherModel().getHourlyForecast();
 
     Navigation.navigateToScreen(
         context: context,
         screen: HomePage(
           locationWeather: weatherData,
+          // hourlyForecastData: hourlyForecastData,
         ));
   }
 
