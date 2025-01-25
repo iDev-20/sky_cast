@@ -74,12 +74,12 @@ extension DateTimeExtensions on DateTime {
   }
   
   String myCustomTime() {
-    var format = DateFormat('hh:mm');
+    var format = DateFormat('HH:mm');
     return format.format(this);
   }
 
   String myCustomDateTime({bool? newLine}) {
-    var format = DateFormat('hh:mm');
+    var format = DateFormat('HH:mm');
     return '${myCustomDate()}${newLine == true ? "\n" : " "}${format.format(this)}';
   }
 
