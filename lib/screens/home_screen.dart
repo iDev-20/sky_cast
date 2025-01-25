@@ -10,9 +10,11 @@ import 'package:sky_cast/services/weather.dart';
 import 'package:sky_cast/utilis/navigation.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, this.locationWeather, this.hourlyForecastData});
+  const HomePage(
+      {super.key, this.locationWeather, this.cities, this.hourlyForecastData});
 
   final locationWeather;
+  final cities;
   final hourlyForecastData;
 
   @override
@@ -32,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   int? maxTemperature;
   int? minTemperature;
   int? seaLevel;
+  int? feelsLike;
 
   @override
   void initState() {
@@ -43,6 +46,9 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       double temp = weatherData['main']['temp'];
       temperature = temp.toInt();
+
+      double fl = weatherData['main']['feels_like'];
+      feelsLike = fl.toInt();
 
       pressure = weatherData['main']['pressure'];
       humidity = weatherData['main']['humidity'];
@@ -140,7 +146,9 @@ class _HomePageState extends State<HomePage> {
                                     onTap: () {
                                       Navigation.navigateToScreen(
                                           context: context,
-                                          screen: const DetailsScreen());
+                                          screen: DetailsScreen(
+                                            cities: widget.cities,
+                                          ));
                                     },
                                     child: const Icon(Icons.menu,
                                         color: Colors.white),
@@ -199,8 +207,12 @@ class _HomePageState extends State<HomePage> {
                                       const SizedBox(height: 4.0),
                                       AppImages.svgCloudDrizzle,
                                     ],
-                                  )
+                                  ),
                                 ],
+                              ),
+                              Text(
+                                'feels like $feelsLike°C',
+                                style: const TextStyle(color: Colors.white),
                               ),
                               const SizedBox(height: 20),
                               Container(

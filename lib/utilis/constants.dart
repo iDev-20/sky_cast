@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sky_cast/resources/app_images.dart';
 
 const kTempTextStyle = TextStyle(
   fontFamily: 'Spartan MB',
@@ -27,19 +26,30 @@ final kButtonStyle = ButtonStyle(
 
 const kIconColor = Colors.white;
 
-final kTextFieldInputDecoration = InputDecoration(
-  contentPadding: const EdgeInsets.all(8),
-  filled: true,
-  fillColor: const Color(0x1FFFFFFF),
-  prefixIcon: Padding(
-    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-    child: AppImages.svgSearchIcon,
-  ),
-  prefixIconColor: const Color(0x99EBEBF5),
-  hintText: 'Search for a city or airport',
-  hintStyle: const TextStyle(color: Color(0x99EBEBF5)),
-  border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-);
+const kTextFieldInputDecoration = InputDecoration(
+    contentPadding:
+        EdgeInsets.all(8.0),
+    filled: true,
+    fillColor: Color(0x1FFFFFFF),
+    // suffixIcon: Padding(
+    //   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+    //   child: AppImages.svgSearchIcon,
+    // ),
+    // suffixIconColor: const Color(0x99EBEBF5),
+    hintText: 'Search for a city or airport',
+    hintStyle: TextStyle(color: Color(0x99333333)),
+    // border: OutlineInputBorder(
+    //   borderRadius: BorderRadius.circular(20),
+    //   borderSide: const BorderSide(color: Colors.white),
+    // ),
+    // focusedBorder: OutlineInputBorder(
+    //   borderRadius: BorderRadius.circular(20),
+    //   borderSide: const BorderSide(color: Colors.white),
+    // ),
+    // enabledBorder: OutlineInputBorder(
+    //   borderRadius: BorderRadius.circular(20),
+    //   borderSide: const BorderSide(color: Colors.white),
+    // ),
+    border: InputBorder.none);
 
 const mostlyRain = '';

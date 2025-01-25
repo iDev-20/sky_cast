@@ -1,10 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sky_cast/screens/home_screen.dart';
 import 'package:sky_cast/services/weather.dart';
-import 'package:sky_cast/utilis/navigation.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -14,8 +15,6 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  bool? showSpinner;
-
   @override
   void initState() {
     super.initState();
@@ -23,15 +22,59 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getLocationData() async {
-    var weatherData = await WeatherModel().getLocationWeather();
-    // var hourlyForecastData = await WeatherModel().getHourlyForecast();
+    try {
+      var weatherData = await WeatherModel().getLocationWeather();
+      List<Map<String, dynamic>> cities = await getCitiesData();
 
-    Navigation.navigateToScreen(
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(
+            locationWeather: weatherData,
+            cities: cities,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error fetching location data: $e');
+      showDialog(
         context: context,
-        screen: HomePage(
-          locationWeather: weatherData,
-          // hourlyForecastData: hourlyForecastData,
-        ));
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Failed to fetch weather data. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getCitiesData() async {
+    List<String> allCities = ['Tokyo', 'London', 'Lagos', 'New York', 'Toronto', 'Berlin'];
+    List<String> randomCities = getRandomCities(allCities, 5);
+
+    List<Map<String, dynamic>> weatherList = [];
+    for (String cityName in randomCities) {
+      try {
+        var cityWeather = await WeatherModel().getCityWeather(cityName);
+        if (cityWeather != null) {
+          weatherList.add(cityWeather);
+        }
+      } catch (e) {
+        debugPrint('Error fetching weather for $cityName: $e');
+      }
+    }
+
+    return weatherList;
+  }
+
+  List<String> getRandomCities(List<String> cities, int count) {
+    cities.shuffle(Random());
+    return cities.length > count ? cities.sublist(0, count) : cities;
   }
 
   @override
