@@ -3,8 +3,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:sky_cast/resources/app_images.dart';
 import 'package:sky_cast/services/location.dart';
 import 'package:sky_cast/services/networking.dart';
+import 'package:sky_cast/utilis/constants.dart';
 
-const apiKey = 'a97768d238ad7ce82199db665e8ac84d';
 const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
 const openWeatherMapHourlyForecastURL =
     'https://pro.openweathermap.org/data/2.5/forecast/hourly';

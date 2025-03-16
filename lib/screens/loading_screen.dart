@@ -26,6 +26,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
       var weatherData = await WeatherModel().getLocationWeather();
       List<Map<String, dynamic>> cities = await getCitiesData();
 
+      // String cityTimeZone = 'Africa/Accra';
+      // var timeData = await TimeModel().getCityTime(cityTimeZone);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -41,7 +44,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Error'),
-          content: const Text('Failed to fetch weather data. Please try again.'),
+          content:
+              const Text('Failed to fetch weather data. Please try again.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -54,7 +58,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<List<Map<String, dynamic>>> getCitiesData() async {
-    List<String> allCities = ['Tokyo', 'London', 'Lagos', 'New York', 'Toronto', 'Berlin'];
+    List<String> allCities = [
+      'Tokyo',
+      'London',
+      'Lagos',
+      'New York',
+      'Toronto',
+      'Berlin'
+    ];
     List<String> randomCities = getRandomCities(allCities, 5);
 
     List<Map<String, dynamic>> weatherList = [];

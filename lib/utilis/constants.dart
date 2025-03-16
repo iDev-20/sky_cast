@@ -27,8 +27,7 @@ final kButtonStyle = ButtonStyle(
 const kIconColor = Colors.white;
 
 const kTextFieldInputDecoration = InputDecoration(
-    contentPadding:
-        EdgeInsets.all(8.0),
+    contentPadding: EdgeInsets.all(8.0),
     filled: true,
     fillColor: Color(0x1FFFFFFF),
     // suffixIcon: Padding(
@@ -36,7 +35,7 @@ const kTextFieldInputDecoration = InputDecoration(
     //   child: AppImages.svgSearchIcon,
     // ),
     // suffixIconColor: const Color(0x99EBEBF5),
-    hintText: 'Search for a city or airport',
+    hintText: 'Search for a city',
     hintStyle: TextStyle(color: Color(0x99333333)),
     // border: OutlineInputBorder(
     //   borderRadius: BorderRadius.circular(20),
@@ -53,3 +52,5 @@ const kTextFieldInputDecoration = InputDecoration(
     border: InputBorder.none);
 
 const mostlyRain = '';
+const apiKey = 'a97768d238ad7ce82199db665e8ac84d';
+

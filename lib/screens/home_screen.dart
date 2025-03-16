@@ -5,7 +5,9 @@ import 'package:iconsax/iconsax.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:sky_cast/extensions/date_time_extensions.dart';
 import 'package:sky_cast/resources/app_images.dart';
+import 'package:sky_cast/resources/drawer_menu_items.dart';
 import 'package:sky_cast/screens/details_screen.dart';
+// import 'package:sky_cast/screens/time_screen.dart';
 import 'package:sky_cast/services/weather.dart';
 import 'package:sky_cast/utilis/navigation.dart';
 
@@ -21,6 +23,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+int selectedDrawerIndex = 0;
+
 class _HomePageState extends State<HomePage> {
   bool showSpinner = false;
   String? cityName;
@@ -35,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   int? minTemperature;
   int? seaLevel;
   int? feelsLike;
+  String? timeZone;
 
   @override
   void initState() {
@@ -67,6 +72,8 @@ class _HomePageState extends State<HomePage> {
 
       weatherDescription = weatherData['weather'][0]['description'];
 
+      timeZone = weatherData['timeZone'];
+
       // double hourlyForecastTemp = hourlyForecastData['list']['main']['temp'];
       // hourlyForecastTemperature = hourlyForecastTemp.toInt();
     });
@@ -86,6 +93,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        drawerEnableOpenDragGesture: false,
         body: RefreshIndicator(
           onRefresh: () async {
             var weatherData = await WeatherModel().getLocationWeather();
@@ -142,27 +150,33 @@ class _HomePageState extends State<HomePage> {
                                       ],
                                     ),
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigation.navigateToScreen(
-                                          context: context,
-                                          screen: DetailsScreen(
-                                            cities: widget.cities,
-                                          ));
-                                    },
-                                    child: const Icon(Icons.menu,
-                                        color: Colors.white),
-                                  ),
+                                  Builder(builder: (context) {
+                                    return InkWell(
+                                      onTap: () {
+                                        Scaffold.of(context).openEndDrawer();
+                                      },
+                                      child: const Icon(Icons.menu,
+                                          color: Colors.white),
+                                    );
+                                  }),
                                 ],
                               ),
                               const SizedBox(height: 29),
-                              Text(
-                                'Today, ${DateTime.now().myCustomDateTime()}',
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Urbanist'),
+                              GestureDetector(
+                                onTap: () {
+                                  // Navigation.navigateToScreen(
+                                  //     context: context,
+                                  //     screen: const TimeScreen());
+                                },
+                                child: Text(
+                                  'Today, ${DateTime.now().myCustomDateTime()}',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontFamily: 'Urbanist'),
+                                ),
                               ),
-                              const SizedBox(height: 22),
+                              const SizedBox(height: 18),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -334,6 +348,43 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+              ],
+            ),
+          ),
+        ),
+        endDrawer: Drawer(
+          width: 200,
+          backgroundColor: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 80),
+            child: Column(
+              children: [
+                const Text(
+                  'Navigate to:',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Urbanist',
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 30),
+                DrawerMenuItem(
+                    title: 'Weather',
+                    icon: Icons.sunny,
+                    onTap: () {
+                      Navigation.navigateToScreen(
+                          context: context, screen: const DetailsScreen());
+                    },
+                    isSelected: selectedDrawerIndex == 1),
+                DrawerMenuItem(
+                    title: 'Time',
+                    icon: Icons.access_time_filled_rounded,
+                    onTap: () {
+                      // Navigation.navigateToScreen(
+                      //     context: context,
+                      //     screen: TimeScreen(timeData: timeData));
+                    },
+                    isSelected: selectedDrawerIndex == 2),
               ],
             ),
           ),
