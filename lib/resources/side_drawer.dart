@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sky_cast/resources/drawer_menu_items.dart';
 import 'package:sky_cast/screens/details_screen.dart';
+import 'package:sky_cast/screens/time_screen.dart';
 import 'package:sky_cast/utilis/navigation.dart';
 
 class SideDrawer extends StatefulWidget {
@@ -47,9 +48,9 @@ class _SideDrawerState extends State<SideDrawer> {
                 title: 'Time',
                 icon: Icons.access_time_filled_rounded,
                 onTap: () {
-                  // Navigation.navigateToScreen(
-                  //     context: context,
-                  //     screen: TimeScreen(timeData: timeData));
+                  selectedDrawerIndex = 2;
+                  Navigation.navigateToScreen(
+                      context: context, screen: const TimeScreen());
                 },
                 isSelected: selectedDrawerIndex == 2),
           ],

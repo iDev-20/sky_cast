@@ -10,10 +10,12 @@ const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
 const openWeatherMapHourlyForecastURL =
     'https://pro.openweathermap.org/data/2.5/forecast/hourly';
 
-class WeatherModel {
+class WeatherViewModel {
   Future<Weather?> getCityWeather(String cityName) async {
     final url = '$openWeatherMapURL?q=$cityName&appid=$apiKey&units=metric';
-    final weatherData = await NetworkHelper(url).getData();
+    final weatherData = await NetworkHelper(
+            url: url, errorMessage: 'Error getting city weather')
+        .getData();
 
     if (weatherData == null) return null;
     return Weather.fromJson(weatherData);
@@ -38,7 +40,9 @@ class WeatherModel {
 
     final url = '$openWeatherMapURL?'
         'lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric';
-    final weatherData = await NetworkHelper(url).getData();
+    final weatherData = await NetworkHelper(
+            url: url, errorMessage: 'error getting location weather')
+        .getData();
 
     if (weatherData == null) return null;
     return Weather.fromJson(weatherData);

@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class NetworkHelper {
-  NetworkHelper(this.url);
+  NetworkHelper(
+      {required this.url, required this.errorMessage});
 
   final String url;
+  final String errorMessage;
 
   Future getData() async {
     http.Response response = await http.get(Uri.parse(url));
@@ -21,7 +23,7 @@ class NetworkHelper {
         return null;
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      print('$errorMessage: $e');
       return null;
     }
   }

@@ -22,9 +22,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
     getLocationData();
   }
 
+
   void getLocationData() async {
     try {
-      var weatherData = await WeatherModel().getLocationWeather();
+      var weatherData = await WeatherViewModel().getLocationWeather();
       List<Weather> cities = await getCitiesData();
 
       // String cityTimeZone = 'Africa/Accra';
@@ -72,7 +73,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     List<Weather> weatherList = [];
     for (String cityName in randomCities) {
       try {
-        var cityWeather = await WeatherModel().getCityWeather(cityName);
+        var cityWeather = await WeatherViewModel().getCityWeather(cityName);
         if (cityWeather != null) {
           weatherList.add(cityWeather);
         }

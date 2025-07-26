@@ -58,7 +58,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       try {
         final weather = Weather.fromJson(citiesData);
         final conditionId = citiesData['weather'][0]['main'];
-        final icon = WeatherModel().getWeatherIcon(conditionId);
+        final icon = WeatherViewModel().getWeatherIcon(conditionId);
 
         cityWeatherCard.add(CityWeatherCard(
             temperature: weather.temperature.toInt(),
@@ -79,11 +79,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
     setState(() => showSpinner = true);
 
     try {
-      final weather = await WeatherModel().getCityWeather(cityName!);
+      final weather = await WeatherViewModel().getCityWeather(cityName!);
 
       if (weather != null) {
         final condition = weather.weatherId;
-        final icon = WeatherModel().getWeatherIcon(condition);
+        final icon = WeatherViewModel().getWeatherIcon(condition);
 
         final alreadyExists = cityWeatherCard.any((card) =>
             card.cityName.toLowerCase() == weather.cityName.toLowerCase());

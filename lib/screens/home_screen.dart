@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
   const HomePage(
       {super.key, this.locationWeather, this.cities, this.hourlyForecastData});
 
-
   final Weather? locationWeather;
   final List<Weather>? cities;
   final hourlyForecastData;
@@ -85,7 +84,7 @@ class _HomePageState extends State<HomePage> {
         ),
         child: RefreshIndicator(
           onRefresh: () async {
-            var weatherData = await WeatherModel().getLocationWeather();
+            var weatherData = await WeatherViewModel().getLocationWeather();
             updateUI(weatherData);
           },
           child: ModalProgressHUD(
@@ -117,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                                       setState(() {
                                         showSpinner = true;
                                       });
-                                      var weatherData = await WeatherModel()
+                                      var weatherData = await WeatherViewModel()
                                           .getLocationWeather();
                                       updateUI(weatherData);
                                       setState(() {

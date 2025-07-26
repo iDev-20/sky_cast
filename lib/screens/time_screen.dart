@@ -6,9 +6,7 @@ import 'package:sky_cast/utilis/constants.dart';
 import 'package:sky_cast/utilis/navigation.dart';
 
 class TimeScreen extends StatefulWidget {
-  const TimeScreen({super.key, required this.timeData});
-
-  final Map<String, dynamic> timeData;
+  const TimeScreen({super.key});
 
   @override
   State<TimeScreen> createState() => _TimeScreenState();
@@ -17,19 +15,26 @@ class TimeScreen extends StatefulWidget {
 class _TimeScreenState extends State<TimeScreen> {
   bool showSpinner = false;
 
-  TimeModel timeModel = TimeModel();
-  String? timeZone;
-  String? currentTime;
+  TextEditingController cityController = TextEditingController();
+  List<String> continents = [];
+  String? selectedContinent;
 
   @override
   void initState() {
     super.initState();
-    getTimeForCity(widget.timeData);
+    loadContinents();
   }
 
-  void getTimeForCity(Map<String, dynamic> timeData) async {
+  Future<void> loadContinents() async {
     setState(() {
-      timeZone = timeData['timeZone'];
+      showSpinner = true;
+    });
+    final fetchedContinents = await TimeViewModel().fetchContinents();
+    setState(() {
+      continents = fetchedContinents;
+      selectedContinent =
+          fetchedContinents.isNotEmpty ? fetchedContinents.first : null;
+      showSpinner = false;
     });
   }
 
@@ -94,109 +99,76 @@ class _TimeScreenState extends State<TimeScreen> {
                           ],
                         ),
                         const SizedBox(height: 27.0),
-                        Container(
-                          height: 36,
-                          decoration: BoxDecoration(
-                              color: const Color(0x1FFFFFFF),
-                              borderRadius: BorderRadius.circular(20),
-                              border:
-                                  Border.all(color: Colors.white, width: 0.5)),
-                          child: Row(
-                            children: [
-                              Expanded(
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonHideUnderline(
                                 child: Container(
-                                  padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                          color: Colors.white, width: 0.5)),
-                                  child: TextField(
-                                    cursorColor: const Color(0x99333333),
-                                    style: const TextStyle(color: Colors.black),
-                                    decoration: kTextFieldInputDecoration,
-                                    onChanged: (value) {
-                                      timeZone = value;
+                                    color: const Color(0x1FFFFFFF),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: const Color(0xFFD9D9D9),
+                                    ),
+                                  ),
+                                  child: DropdownButton<String>(
+                                    borderRadius: BorderRadius.circular(12),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    style: const TextStyle(
+                                        fontFamily: 'Nunito',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400),
+                                    iconSize: 35,
+                                    iconEnabledColor: const Color(0xFFD9D9D9),
+                                    iconDisabledColor: const Color(0xFFD9D9D9),
+                                    dropdownColor: const Color(0x33000000),
+                                    value: selectedContinent,
+                                    items: continents
+                                        .map(
+                                          (continent) => DropdownMenuItem(
+                                            value: continent,
+                                            child: Text(continent),
+                                          ),
+                                        )
+                                        .toList(),
+                                    onChanged: (value) async {
+                                      selectedContinent = value ?? '';
                                     },
                                   ),
                                 ),
                               ),
-                              Container(
-                                height: double.infinity,
-                                width: 40,
-                                decoration: const BoxDecoration(
-                                    color: null,
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(20.0),
-                                      bottomRight: Radius.circular(20.0),
-                                    )),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    setState(() {
-                                      showSpinner = true;
-                                    });
-                                    if (timeZone != null) {
-                                      var timeData = await timeModel
-                                          .getCityTime(timeZone ?? '');
-                                      getTimeForCity(timeData);
-                                    }
-                                    setState(() {
-                                      showSpinner = false;
-                                    });
-                                  },
-                                  child: const Icon(
-                                    Icons.search,
-                                    color: Color(0x99333333),
-                                  ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                cursorColor: const Color(0xFFD9D9D9),
+                                style: const TextStyle(color: Colors.white),
+                                decoration: kTextFieldInputDecoration.copyWith(
+                                  hintStyle:
+                                      const TextStyle(color: Color(0xFFD9D9D9)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFD9D9D9))),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFD9D9D9))),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFD9D9D9))),
                                 ),
+                                textCapitalization: TextCapitalization.words,
+                                keyboardType: TextInputType.text,
+                                onChanged: (value) {},
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10.0),
                       ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, right: 20.0),
-                      child: RefreshIndicator(
-                          onRefresh: () async {
-                            // try {
-                            //   var newCities = await WeatherModel()
-                            //       .getCityWeather(cityName ?? '');
-
-                            //   if (newCities != null) {
-                            //     updateCardUI(newCities);
-                            //   } else {
-                            //     setState(() {
-                            //       cityWeatherCard.clear();
-                            //     });
-                            //   }
-                            // } catch (e) {
-                            //   print('Error fetching cities: $e');
-                            // }
-                          },
-                          child: Center(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Time Zone: $timeZone',
-                                ),
-                                Text(
-                                  'Current Time: $currentTime',
-                                ),
-                              ],
-                            ),
-                          )
-                          // ListView.builder(
-                          //     padding: const EdgeInsets.only(top: 20.0),
-                          //     shrinkWrap: true,
-                          //     itemCount: cityWeatherCard.length,
-                          //     itemBuilder: (context, index) {
-                          //       return cityWeatherCard[index];
-                          //     }),
-                          ),
                     ),
                   ),
                 ],

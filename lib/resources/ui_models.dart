@@ -52,11 +52,21 @@ class Weather {
 
 class Time {
   final DateTime dateTime;
-  final Duration timezone;
+  final String timeZone;
+  final String dayOfWeek;
+  final bool dstActive;
 
-  Time({required this.dateTime, required this.timezone});
+  Time(
+      {required this.dateTime,
+      required this.timeZone,
+      required this.dayOfWeek,
+      required this.dstActive});
 
   factory Time.fromJson(Map<String, dynamic> json) {
-    return Time(dateTime: json['dt'], timezone: json['timezone']);
+    return Time(
+        dateTime: DateTime.parse(json['dateTime']),
+        timeZone: json['timeZone'],
+        dayOfWeek: json['dayOfWeek'],
+        dstActive: json['dstActive']);
   }
 }
