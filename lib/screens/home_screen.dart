@@ -5,18 +5,18 @@ import 'package:iconsax/iconsax.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:sky_cast/extensions/date_time_extensions.dart';
 import 'package:sky_cast/resources/app_images.dart';
-import 'package:sky_cast/resources/drawer_menu_items.dart';
-import 'package:sky_cast/screens/details_screen.dart';
+import 'package:sky_cast/resources/ui_models.dart';
 // import 'package:sky_cast/screens/time_screen.dart';
 import 'package:sky_cast/services/weather.dart';
-import 'package:sky_cast/utilis/navigation.dart';
+import 'package:sky_cast/resources/side_drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage(
       {super.key, this.locationWeather, this.cities, this.hourlyForecastData});
 
-  final locationWeather;
-  final cities;
+
+  final Weather? locationWeather;
+  final List<Weather>? cities;
   final hourlyForecastData;
 
   @override
@@ -47,32 +47,21 @@ class _HomePageState extends State<HomePage> {
     updateUI(widget.locationWeather);
   }
 
-  void updateUI(dynamic weatherData) {
+  void updateUI(Weather? weatherData) {
     setState(() {
-      double temp = weatherData['main']['temp'];
-      temperature = temp.toInt();
+      temperature = weatherData?.temperature.toInt();
+      feelsLike = weatherData?.feelsLike.toInt();
+      pressure = weatherData?.pressure;
+      humidity = weatherData?.humidity;
+      minTemperature = weatherData?.minTemperature.toInt();
+      maxTemperature = weatherData?.maxTemperature.toInt();
+      seaLevel = weatherData?.seaLevel;
+      countryName = weatherData?.countryName;
+      cityName = weatherData?.cityName;
+      windSpeed = weatherData?.windSpeed.toInt();
+      weatherDescription = weatherData?.weatherDescription;
 
-      double fl = weatherData['main']['feels_like'];
-      feelsLike = fl.toInt();
-
-      pressure = weatherData['main']['pressure'];
-      humidity = weatherData['main']['humidity'];
-      double minTemp = weatherData['main']['temp_min'];
-      minTemperature = minTemp.toInt();
-      double maxTemp = weatherData['main']['temp_max'];
-      maxTemperature = maxTemp.toInt();
-      seaLevel = weatherData['main']['sea_level'];
-
-      countryName = weatherData['sys']['country'];
-
-      cityName = weatherData['name'];
-
-      double speed = weatherData['wind']['speed'];
-      windSpeed = speed.toInt();
-
-      weatherDescription = weatherData['weather'][0]['description'];
-
-      timeZone = weatherData['timeZone'];
+      // timeZone = weatherData['timeZone'];
 
       // double hourlyForecastTemp = hourlyForecastData['list']['main']['temp'];
       // hourlyForecastTemperature = hourlyForecastTemp.toInt();
@@ -81,20 +70,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          colors: [
-            Color(0xFF7F999A),
-            Color(0xFFA9A39C),
-          ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      drawerEnableOpenDragGesture: false,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            colors: [
+              Color(0xFF7F999A),
+              Color(0xFFA9A39C),
+            ],
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        drawerEnableOpenDragGesture: false,
-        body: RefreshIndicator(
+        child: RefreshIndicator(
           onRefresh: () async {
             var weatherData = await WeatherModel().getLocationWeather();
             updateUI(weatherData);
@@ -352,44 +341,8 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        endDrawer: Drawer(
-          width: 200,
-          backgroundColor: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 80),
-            child: Column(
-              children: [
-                const Text(
-                  'Navigate to:',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Urbanist',
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 30),
-                DrawerMenuItem(
-                    title: 'Weather',
-                    icon: Icons.sunny,
-                    onTap: () {
-                      Navigation.navigateToScreen(
-                          context: context, screen: const DetailsScreen());
-                    },
-                    isSelected: selectedDrawerIndex == 1),
-                DrawerMenuItem(
-                    title: 'Time',
-                    icon: Icons.access_time_filled_rounded,
-                    onTap: () {
-                      // Navigation.navigateToScreen(
-                      //     context: context,
-                      //     screen: TimeScreen(timeData: timeData));
-                    },
-                    isSelected: selectedDrawerIndex == 2),
-              ],
-            ),
-          ),
-        ),
       ),
+      endDrawer: const SideDrawer(),
     );
   }
 

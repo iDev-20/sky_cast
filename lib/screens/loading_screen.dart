@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sky_cast/resources/ui_models.dart';
 import 'package:sky_cast/screens/home_screen.dart';
 import 'package:sky_cast/services/weather.dart';
 
@@ -24,7 +25,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void getLocationData() async {
     try {
       var weatherData = await WeatherModel().getLocationWeather();
-      List<Map<String, dynamic>> cities = await getCitiesData();
+      List<Weather> cities = await getCitiesData();
 
       // String cityTimeZone = 'Africa/Accra';
       // var timeData = await TimeModel().getCityTime(cityTimeZone);
@@ -32,10 +33,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(
-            locationWeather: weatherData,
-            cities: cities,
-          ),
+          builder: (context) =>
+              HomePage(locationWeather: weatherData, cities: cities),
         ),
       );
     } catch (e) {
@@ -48,7 +47,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
               const Text('Failed to fetch weather data. Please try again.'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () async {
+                Navigator.pop(context);
+              },
               child: const Text('OK'),
             ),
           ],
@@ -57,7 +58,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getCitiesData() async {
+  Future<List<Weather>> getCitiesData() async {
     List<String> allCities = [
       'Tokyo',
       'London',
@@ -68,7 +69,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     ];
     List<String> randomCities = getRandomCities(allCities, 5);
 
-    List<Map<String, dynamic>> weatherList = [];
+    List<Weather> weatherList = [];
     for (String cityName in randomCities) {
       try {
         var cityWeather = await WeatherModel().getCityWeather(cityName);

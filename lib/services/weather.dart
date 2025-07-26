@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sky_cast/resources/app_images.dart';
+import 'package:sky_cast/resources/ui_models.dart';
 import 'package:sky_cast/services/location.dart';
 import 'package:sky_cast/services/networking.dart';
 import 'package:sky_cast/utilis/constants.dart';
@@ -9,14 +10,13 @@ const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
 const openWeatherMapHourlyForecastURL =
     'https://pro.openweathermap.org/data/2.5/forecast/hourly';
 
-
 class WeatherModel {
-  Future<dynamic> getCityWeather(String cityName) async {
-    NetworkHelper networkHelper = NetworkHelper(
-        '$openWeatherMapURL?q=$cityName&appid=$apiKey&units=metric');
+  Future<Weather?> getCityWeather(String cityName) async {
+    final url = '$openWeatherMapURL?q=$cityName&appid=$apiKey&units=metric';
+    final weatherData = await NetworkHelper(url).getData();
 
-    var weatherData = await networkHelper.getData();
-    return weatherData;
+    if (weatherData == null) return null;
+    return Weather.fromJson(weatherData);
   }
 
   // Future<dynamic> getHourlyForecast() async {
@@ -32,18 +32,16 @@ class WeatherModel {
   //   return weatherData;
   // }
 
-  Future<dynamic> getLocationWeather() async {
+  Future<Weather?> getLocationWeather() async {
     Location location = Location();
-
     await location.getCurrentLocation();
 
-    NetworkHelper networkHelper = NetworkHelper('$openWeatherMapURL?'
-        'lat=${location.latitude}&lon=${location.longitude}'
-        '&appid=$apiKey&units=metric');
+    final url = '$openWeatherMapURL?'
+        'lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric';
+    final weatherData = await NetworkHelper(url).getData();
 
-    var weatherData = await networkHelper.getData();
-
-    return weatherData;
+    if (weatherData == null) return null;
+    return Weather.fromJson(weatherData);
   }
 
   String noIdea = '🤷‍';

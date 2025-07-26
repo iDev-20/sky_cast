@@ -80,7 +80,7 @@ extension DateTimeExtensions on DateTime {
 
   String myCustomDateTime({bool? newLine}) {
     var format = DateFormat('HH:mm');
-    return '${myCustomDate()}${newLine == true ? "\n" : " "}${format.format(this)}';
+    return '${myCustomDate()}${newLine == true ? "\n" : " • "}${format.format(this)}';
   }
 
   String friendlyDateTime({bool? newLine}) {

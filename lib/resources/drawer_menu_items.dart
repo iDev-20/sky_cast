@@ -29,42 +29,30 @@ class DrawerMenuItem extends StatelessWidget {
           onTap: enableTap
               ? () {
                   Navigation.back(context: context);
-                  if (isSelected == false) {
-                    Navigation.back(context: context);
+                  if (!isSelected) {
                     onTap.call();
                   }
                 }
               : null,
-          child: SizedBox(
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 40.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: 18,
-                    width: 18,
-                    child: Icon(
-                      icon,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 40.0),
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 16,
+                  width: 16,
+                  child: Icon(icon, color: Colors.white),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: const TextStyle(
+                      fontFamily: 'Urbanist',
+                      fontSize: 18,
                       color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
-              ),
+                      fontWeight: FontWeight.w700),
+                ),
+              ],
             ),
           ),
         ),

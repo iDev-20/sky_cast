@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sky_cast/screens/home_screen.dart';
 
 class Navigation {
   Navigation._();
@@ -27,11 +28,11 @@ class Navigation {
         (route) => false);
   }
 
-  // static Future navigateToHomePage({required BuildContext context}) {
-  //   return Navigator.pushAndRemoveUntil(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (BuildContext context) => const LocationScreen()),
-  //       (route) => false);
-  // }
+  static Future navigateToHomePage({required BuildContext context}) {
+    return Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => const HomePage()),
+        (route) => false);
+  }
 }

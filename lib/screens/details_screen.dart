@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:sky_cast/resources/app_images.dart';
+import 'package:sky_cast/resources/ui_models.dart';
 import 'package:sky_cast/services/weather.dart';
 import 'package:sky_cast/utilis/constants.dart';
 import 'package:sky_cast/utilis/navigation.dart';
@@ -38,7 +39,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     });
   }
 
-  void updateCardUI(dynamic cities) {
+  void updateCardUI(List<dynamic>? cities) {
     if (cities == null || cities.isEmpty) {
       setState(() {
         cityWeatherCard.clear();
@@ -54,57 +55,84 @@ class _DetailsScreenState extends State<DetailsScreen> {
     for (int i = 0; i < limit; i++) {
       var citiesData = cities[i];
 
-      if (citiesData == null ||
-          citiesData['main'] == null ||
-          citiesData['sys'] == null ||
-          citiesData['weather'] == null ||
-          citiesData['weather'].isEmpty) {
+      try {
+        final weather = Weather.fromJson(citiesData);
+        final conditionId = citiesData['weather'][0]['main'];
+        final icon = WeatherModel().getWeatherIcon(conditionId);
+
+        cityWeatherCard.add(CityWeatherCard(
+            temperature: weather.temperature.toInt(),
+            weatherIcon: icon,
+            cityName: weather.cityName,
+            weatherStatus: weather.weatherDescription));
+      } catch (e) {
         continue;
-        // Skip invalid or incomplete data
       }
-      double temp = citiesData['main']['temp'].toDouble();
-      temperature = temp.toInt();
-
-      countryName = citiesData['sys']['country'];
-
-      cityName = citiesData['name'];
-
-      weatherStatus = citiesData['weather'][0]['main'];
-
-      var condition = citiesData['weather'][0]['id'];
-      weatherIcon = WeatherModel().getWeatherIcon(condition ?? 0);
-
-      cityWeatherCard.add(CityWeatherCard(
-          temperature: temperature ?? 0,
-          weatherIcon: weatherIcon ?? const SizedBox(),
-          cityName: cityName ?? '',
-          weatherStatus: weatherStatus ?? ''));
     }
     setState(() {});
   }
 
+  Future<void> _searchCityWeather() async {
+    if (cityName == null || cityName!.isEmpty) return;
+
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => showSpinner = true);
+
+    try {
+      final weather = await WeatherModel().getCityWeather(cityName!);
+
+      if (weather != null) {
+        final condition = weather.weatherId;
+        final icon = WeatherModel().getWeatherIcon(condition);
+
+        final alreadyExists = cityWeatherCard.any((card) =>
+            card.cityName.toLowerCase() == weather.cityName.toLowerCase());
+
+        if (!alreadyExists) {
+          setState(() {
+            cityWeatherCard.insert(
+              0,
+              CityWeatherCard(
+                temperature: weather.temperature.toInt(),
+                weatherIcon: icon,
+                cityName: weather.cityName,
+                weatherStatus: weather.weatherDescription,
+              ),
+            );
+          });
+        }
+      } else {
+        // handle not found (e.g., show a snackbar)
+      }
+    } catch (e) {
+      print('Search error: $e');
+    } finally {
+      setState(() => showSpinner = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          colors: [
-            Color(0xFF7F999A),
-            Color(0xFFA9A39C),
-          ],
-        ),
-      ),
-      child: GestureDetector(
-        onTap: () {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        child: AbsorbPointer(
-          absorbing: false,
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.transparent,
-            body: ModalProgressHUD(
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: AbsorbPointer(
+        absorbing: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.transparent,
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: [
+                  Color(0xFF7F999A),
+                  Color(0xFFA9A39C),
+                ],
+              ),
+            ),
+            child: ModalProgressHUD(
               inAsyncCall: showSpinner,
               child: Column(
                 children: [
@@ -165,8 +193,15 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     cursorColor: const Color(0x99333333),
                                     style: const TextStyle(color: Colors.black),
                                     decoration: kTextFieldInputDecoration,
+                                    keyboardType: TextInputType.text,
+                                    textInputAction: TextInputAction.search,
+                                    textCapitalization:
+                                        TextCapitalization.words,
                                     onChanged: (value) {
                                       cityName = value;
+                                    },
+                                    onSubmitted: (value) {
+                                      _searchCityWeather();
                                     },
                                   ),
                                 ),
@@ -181,19 +216,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                       bottomRight: Radius.circular(20.0),
                                     )),
                                 child: GestureDetector(
-                                  onTap: () async {
-                                    setState(() {
-                                      showSpinner = true;
-                                    });
-                                    // if (cityName != null) {
-                                    //   var weatherData = await WeatherModel()
-                                    //       .getCityWeather(cityName ?? '');
-                                    //   // updateUI(weatherData);
-                                    // }
-                                    setState(() {
-                                      showSpinner = false;
-                                    });
-                                  },
+                                  onTap: _searchCityWeather,
                                   child: const Icon(
                                     Icons.search,
                                     color: Color(0x99333333),
@@ -211,22 +234,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 15.0, right: 20.0),
                       child: RefreshIndicator(
-                        onRefresh: () async {
-                          // try {
-                          //   var newCities = await WeatherModel()
-                          //       .getCityWeather(cityName ?? '');
-
-                          //   if (newCities != null) {
-                          //     updateCardUI(newCities);
-                          //   } else {
-                          //     setState(() {
-                          //       cityWeatherCard.clear();
-                          //     });
-                          //   }
-                          // } catch (e) {
-                          //   print('Error fetching cities: $e');
-                          // }
-                        },
+                        onRefresh: () async {},
                         child: ListView.builder(
                             padding: const EdgeInsets.only(top: 20.0),
                             shrinkWrap: true,
