@@ -3,57 +3,47 @@ import 'package:flutter_svg/svg.dart';
 import 'package:sky_cast/utilis/navigation.dart';
 
 class DrawerMenuItem extends StatelessWidget {
-  const DrawerMenuItem(
-      {super.key,
-      required this.title,
-      required this.icon,
-      required this.onTap,
-      required this.isSelected,
-      this.visible = true,
-      this.enableTap = true});
+  const DrawerMenuItem({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.onTap,
+    required this.isSelected,
+    this.visible = true,
+  });
 
   final String title;
   final IconData icon;
   final VoidCallback onTap;
   final bool isSelected;
   final bool visible;
-  final bool enableTap;
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
       visible: visible,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: GestureDetector(
-          onTap: enableTap
-              ? () {
-                  Navigation.back(context: context);
-                  if (!isSelected) {
-                    onTap.call();
-                  }
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 40.0),
-            child: Row(
-              children: [
-                SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: Icon(icon, color: Colors.white),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
+      child: InkWell(
+        onTap: () {
+          Navigation.back(context: context);
+          if (!isSelected) {
+            onTap.call();
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.only(left: 30, top: 15, bottom: 15),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.white),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(
+                    fontFamily: 'Urbanist',
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700),
+              ),
+            ],
           ),
         ),
       ),

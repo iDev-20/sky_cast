@@ -20,19 +20,21 @@ class _SideDrawerState extends State<SideDrawer> {
       width: 200,
       backgroundColor: Colors.transparent,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 80),
+        padding: const EdgeInsets.symmetric(vertical: 80),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Navigate to:',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Urbanist',
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500),
+            const Padding(
+              padding: EdgeInsets.only(left: 30, bottom: 15),
+              child: Text(
+                'Navigate to:',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Urbanist',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500),
+              ),
             ),
-            const SizedBox(height: 30),
             DrawerMenuItem(
                 title: 'Weather',
                 icon: Icons.sunny,
