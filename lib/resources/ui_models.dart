@@ -49,3 +49,14 @@ class Weather {
     );
   }
 }
+
+class Time {
+  final DateTime dateTime;
+  final Duration timezone;
+
+  Time({required this.dateTime, required this.timezone});
+
+  factory Time.fromJson(Map<String, dynamic> json) {
+    return Time(dateTime: json['dt'], timezone: json['timezone']);
+  }
+}
