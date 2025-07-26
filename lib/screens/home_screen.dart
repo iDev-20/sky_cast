@@ -60,8 +60,6 @@ class _HomePageState extends State<HomePage> {
       windSpeed = weatherData?.windSpeed.toInt();
       weatherDescription = weatherData?.weatherDescription;
 
-      // timeZone = weatherData['timeZone'];
-
       // double hourlyForecastTemp = hourlyForecastData['list']['main']['temp'];
       // hourlyForecastTemperature = hourlyForecastTemp.toInt();
     });

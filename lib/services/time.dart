@@ -18,8 +18,12 @@ class TimeViewModel {
 
   Future<List<String>> fetchContinents() async {
     final timeZones = await fetchAvailableTimeZones();
-    final continents =
-        timeZones.map((tz) => tz.split('/').first).toSet().toList()..sort();
+    final continents = timeZones
+        .where((tz) => tz.contains('/'))
+        .map((e) => e.split('/').first)
+        .toSet()
+        .toList()
+      ..sort();
     return continents;
   }
 
