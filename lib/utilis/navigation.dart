@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sky_cast/screens/home_screen.dart';
+import 'package:sky_cast/screens/home_page.dart';
 
 class Navigation {
   Navigation._();

@@ -10,6 +10,8 @@ class AppImages {
       const AssetImage('assets/images/bottom_container_background_image.png');
   static AssetImage containerBackgroundImage =
       const AssetImage('assets/images/container_background_image.png');
+  static AssetImage earthImage =
+      const AssetImage('assets/images/earth_image.png');
 
   static SvgPicture svgCloudDrizzle =
       SvgPicture.asset('assets/svgs/cloud_drizzle.svg');

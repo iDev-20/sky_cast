@@ -8,12 +8,16 @@ class CityWeatherCard extends StatelessWidget {
     required this.weatherIcon,
     required this.cityName,
     required this.weatherStatus,
+    required this.tempMax,
+    required this.tempMin,
   });
 
   final int temperature;
   final Widget weatherIcon;
   final String cityName;
   final String weatherStatus;
+  final double tempMax;
+  final double tempMin;
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +65,9 @@ class CityWeatherCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24.0),
-                const Text(
-                  'H:24°  L:18°',
-                  style: TextStyle(
+                Text(
+                  'H:${tempMax.toStringAsFixed(0)}°  L:${tempMin.toStringAsFixed(0)}°',
+                  style: const TextStyle(
                     color: Color(0xFF838383),
                     fontSize: 13,
                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sky_cast/resources/drawer_menu_items.dart';
-import 'package:sky_cast/screens/details_screen.dart';
-import 'package:sky_cast/screens/time_screen.dart';
+import 'package:sky_cast/screens/weather_page.dart';
+import 'package:sky_cast/screens/time_page.dart';
 import 'package:sky_cast/utilis/navigation.dart';
 
 class SideDrawer extends StatefulWidget {
@@ -42,7 +42,7 @@ class _SideDrawerState extends State<SideDrawer> {
                   setState(() {
                     selectedDrawerIndex = 1;
                     Navigation.navigateToScreen(
-                        context: context, screen: const DetailsScreen());
+                        context: context, screen: const WeatherPage());
                   });
                 },
                 isSelected: selectedDrawerIndex == 1),
@@ -52,7 +52,7 @@ class _SideDrawerState extends State<SideDrawer> {
                 onTap: () {
                   selectedDrawerIndex = 2;
                   Navigation.navigateToScreen(
-                      context: context, screen: const TimeScreen());
+                      context: context, screen: const TimePage());
                 },
                 isSelected: selectedDrawerIndex == 2),
           ],

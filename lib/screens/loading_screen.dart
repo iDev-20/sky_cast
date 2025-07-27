@@ -5,8 +5,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sky_cast/resources/ui_models.dart';
-import 'package:sky_cast/screens/home_screen.dart';
-import 'package:sky_cast/services/weather.dart';
+import 'package:sky_cast/screens/home_page.dart';
+import 'package:sky_cast/services/weather_view_model.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
