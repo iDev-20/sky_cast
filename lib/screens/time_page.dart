@@ -269,8 +269,12 @@ class _TimePageState extends State<TimePage> {
                                             color: Color(0xFFD9D9D9))),
                                   ),
                                   textCapitalization: TextCapitalization.words,
+                                  textInputAction: TextInputAction.search,
                                   keyboardType: TextInputType.text,
                                   onChanged: (value) {},
+                                  onSubmitted: (value) {
+                                    searchTime();
+                                  },
                                 ),
                               ),
                             ],

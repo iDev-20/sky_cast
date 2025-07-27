@@ -74,7 +74,7 @@ class _WeatherPageState extends State<WeatherPage> {
     setState(() {});
   }
 
-  Future<void> _searchCityWeather() async {
+  Future<void> searchCityWeather() async {
     if (cityName == null || cityName!.isEmpty) return;
 
     FocusManager.instance.primaryFocus?.unfocus();
@@ -105,9 +105,7 @@ class _WeatherPageState extends State<WeatherPage> {
             );
           });
         }
-      } else {
-        // handle not found (e.g., show a snackbar)
-      }
+      } else {}
     } catch (e) {
       print('Search error: $e');
     } finally {
@@ -199,7 +197,7 @@ class _WeatherPageState extends State<WeatherPage> {
                                       cityName = value;
                                     },
                                     onSubmitted: (value) {
-                                      _searchCityWeather();
+                                      searchCityWeather();
                                     },
                                   ),
                                 ),
@@ -214,7 +212,7 @@ class _WeatherPageState extends State<WeatherPage> {
                                       bottomRight: Radius.circular(20.0),
                                     )),
                                 child: GestureDetector(
-                                  onTap: _searchCityWeather,
+                                  onTap: searchCityWeather,
                                   child: const Icon(
                                     Icons.search,
                                     color: Color(0x99333333),
