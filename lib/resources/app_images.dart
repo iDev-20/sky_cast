@@ -21,7 +21,8 @@ class AppImages {
       SvgPicture.asset('assets/svgs/cloud_lightning.svg');
   static SvgPicture svgCloudSunny =
       SvgPicture.asset('assets/svgs/cloud_sunny.svg');
-  static SvgPicture svgRain = SvgPicture.asset('assets/svgs/drizzle.svg');
+  static SvgPicture svgRain =
+      SvgPicture.asset('assets/svgs/drizzle.svg', height: 28, width: 28);
   static SvgPicture svgLocationIcon =
       SvgPicture.asset('assets/svgs/location_icon.svg');
   static SvgPicture svgSunBig = SvgPicture.asset('assets/svgs/sun_big.svg');

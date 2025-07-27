@@ -3,8 +3,8 @@
 import 'package:geolocator/geolocator.dart';
 
 class Location {
-  double? longitude;
-  double? latitude;
+  double longitude = 0.0;
+  double latitude = 0.0;
 
   Future<void> getCurrentLocation() async {
     try {
@@ -13,10 +13,8 @@ class Location {
           desiredAccuracy: LocationAccuracy.low);
       latitude = position.latitude;
       longitude = position.longitude;
-      print(latitude);
-      print(longitude);
     } catch (e) {
-      print(e);
+      print('Error fetching latitude and logitude: $e');
     }
   }
 }

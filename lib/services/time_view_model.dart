@@ -8,7 +8,9 @@ const getCurrentTimeOfTimeZoneApiUrl =
 class TimeViewModel {
   Future<List<String>> fetchAvailableTimeZones() async {
     final timezones = await NetworkHelper(
-            url: getTimeZoneApiUrl, errorMessage: 'Failed to load timezones')
+            url: getTimeZoneApiUrl,
+            api: 'fetchAvailableTimeZones',
+            errorMessage: 'Failed to load timezones')
         .getData();
     if (timezones != null && timezones is List) {
       return List<String>.from(timezones);
@@ -31,6 +33,7 @@ class TimeViewModel {
       {required String continent, required String city}) async {
     final timeData = await NetworkHelper(
             url: '$getCurrentTimeOfTimeZoneApiUrl?timeZone=$continent%2F$city',
+            api: 'getTimeForTimeZone',
             errorMessage: 'Error getting time for $city')
         .getData();
 

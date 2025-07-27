@@ -50,6 +50,44 @@ class Weather {
   }
 }
 
+class HourlyWeather {
+  final double temperature;
+  final int weatherId;
+  final DateTime dateTime;
+
+  HourlyWeather({
+    required this.temperature,
+    required this.weatherId,
+    required this.dateTime,
+  });
+
+  factory HourlyWeather.fromJson(Map<String, dynamic> json) {
+    final main = json['main'] ?? {};
+    final weatherList = json['weather'] ?? [{}];
+    final dtTxt = json['dt_txt'];
+
+    DateTime parsedDateTime;
+
+    try {
+      parsedDateTime = DateTime.parse(dtTxt ?? '');
+    } catch (e) {
+      parsedDateTime = DateTime.now();
+    }
+
+    return HourlyWeather(
+      temperature: (main['temp'] as num).toDouble(),
+      weatherId: weatherList[0]['id'] ?? 0,
+      dateTime: parsedDateTime,
+    );
+  }
+  static List<HourlyWeather> fromForecastJson(Map<String, dynamic> json) {
+    final list = json['list'] as List<dynamic>? ?? [];
+    return list
+        .map((item) => HourlyWeather.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+}
+
 class Time {
   final String time;
   final String date;

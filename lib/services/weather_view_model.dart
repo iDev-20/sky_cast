@@ -8,31 +8,36 @@ import 'package:sky_cast/utilis/constants.dart';
 
 const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
 const openWeatherMapHourlyForecastURL =
-    'https://pro.openweathermap.org/data/2.5/forecast/hourly';
+    'https://api.openweathermap.org/data/2.5/forecast';
 
 class WeatherViewModel {
   Future<Weather?> getCityWeather(String cityName) async {
     final url = '$openWeatherMapURL?q=$cityName&appid=$apiKey&units=metric';
     final weatherData = await NetworkHelper(
-            url: url, errorMessage: 'Error getting city weather')
+            url: url,
+            api: 'getCityWeather',
+            errorMessage: 'Error getting city weather')
         .getData();
 
     if (weatherData == null) return null;
     return Weather.fromJson(weatherData);
   }
 
-  // Future<dynamic> getHourlyForecast() async {
-  //   Location location = Location();
+  Future<List<HourlyWeather>> getHourlyForecast() async {
+    Location location = Location();
+    await location.getCurrentLocation();
 
-  //   await location.getCurrentLocation();
-  //   NetworkHelper networkHelper =
-  //       NetworkHelper('$openWeatherMapHourlyForecastURL?'
-  //           'lat=${location.latitude}&lon=${location.longitude}'
-  //           '&appid=$apiKey&units=metric');
+    final url =
+        '$openWeatherMapHourlyForecastURL?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric';
+    final hourlyWeatherData = await NetworkHelper(
+            url: url,
+            api: 'getHourlyForecast',
+            errorMessage: 'error getting hourly forecast')
+        .getData();
 
-  //   var weatherData = await networkHelper.getData();
-  //   return weatherData;
-  // }
+    if (hourlyWeatherData == null) return [];
+    return HourlyWeather.fromForecastJson(hourlyWeatherData);
+  }
 
   Future<Weather?> getLocationWeather() async {
     Location location = Location();
@@ -41,7 +46,9 @@ class WeatherViewModel {
     final url = '$openWeatherMapURL?'
         'lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric';
     final weatherData = await NetworkHelper(
-            url: url, errorMessage: 'error getting location weather')
+            url: url,
+            api: 'getLocationWeather',
+            errorMessage: 'error getting location weather')
         .getData();
 
     if (weatherData == null) return null;

@@ -6,17 +6,16 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:sky_cast/extensions/date_time_extensions.dart';
 import 'package:sky_cast/resources/app_images.dart';
 import 'package:sky_cast/resources/ui_models.dart';
-// import 'package:sky_cast/screens/time_screen.dart';
 import 'package:sky_cast/services/weather_view_model.dart';
 import 'package:sky_cast/resources/side_drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage(
-      {super.key, this.locationWeather, this.cities, this.hourlyForecastData});
+      {super.key, this.locationWeather, this.cities, this.hourlyForecast});
 
   final Weather? locationWeather;
   final List<Weather>? cities;
-  final hourlyForecastData;
+  final List<HourlyWeather>? hourlyForecast;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -40,10 +39,13 @@ class _HomePageState extends State<HomePage> {
   int? feelsLike;
   String? timeZone;
 
+  List<HourlyWeather> hourlyForecastList = [];
+
   @override
   void initState() {
     super.initState();
     updateUI(widget.locationWeather);
+    updateHourlyForecast(widget.hourlyForecast ?? []);
   }
 
   void updateUI(Weather? weatherData) {
@@ -59,9 +61,12 @@ class _HomePageState extends State<HomePage> {
       cityName = weatherData?.cityName;
       windSpeed = weatherData?.windSpeed.toInt();
       weatherDescription = weatherData?.weatherDescription;
+    });
+  }
 
-      // double hourlyForecastTemp = hourlyForecastData['list']['main']['temp'];
-      // hourlyForecastTemperature = hourlyForecastTemp.toInt();
+  void updateHourlyForecast(List<HourlyWeather> hourlyWeather) {
+    setState(() {
+      hourlyForecastList = hourlyWeather;
     });
   }
 
@@ -148,19 +153,12 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               const SizedBox(height: 29),
-                              GestureDetector(
-                                onTap: () {
-                                  // Navigation.navigateToScreen(
-                                  //     context: context,
-                                  //     screen: const TimeScreen());
-                                },
-                                child: Text(
-                                  'Today, ${DateTime.now().myCustomDateTime()}',
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontFamily: 'Urbanist'),
-                                ),
+                              Text(
+                                'Today, ${DateTime.now().myCustomDateTime()}',
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Urbanist'),
                               ),
                               const SizedBox(height: 18),
                               Row(
@@ -316,20 +314,26 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 23),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 6.0),
-                            child: hourlyForecast(
-                                weatherIcon: AppImages.svgSunBig),
-                          ),
-                          hourlyForecast(weatherIcon: AppImages.svgCloudSunny),
-                          hourlyForecast(
-                              weatherIcon: AppImages.svgCloudDrizzleBlue),
-                          hourlyForecast(
-                              weatherIcon: AppImages.svgCloudLightning),
-                        ],
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: hourlyForecastList.take(9).map((forecast) {
+                            final time = forecast.dateTime.myCustomTime();
+                            final conditionId = forecast.weatherId;
+                            final icon =
+                                WeatherViewModel().getWeatherIcon(conditionId);
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: hourlyForecast(
+                                  weatherIcon: icon,
+                                  time: time,
+                                  temperature:
+                                      '${forecast.temperature.toInt()}°C'),
+                            );
+                          }).toList(),
+                        ),
                       )
                     ],
                   ),
@@ -381,7 +385,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget hourlyForecast({required Widget weatherIcon}) {
+  Widget hourlyForecast(
+      {required Widget weatherIcon,
+      required String time,
+      required String temperature}) {
     return Container(
       color: Colors.transparent,
       child: Column(
@@ -393,21 +400,18 @@ class _HomePageState extends State<HomePage> {
                 color: Color(0xFFF6F6F6), shape: BoxShape.circle),
             child: weatherIcon,
           ),
-          const SizedBox(
-            height: 9.0,
-          ),
-          const Text(
-            '05:00 AM',
-            style: TextStyle(
+          const SizedBox(height: 9.0),
+          Text(
+            time,
+            style: const TextStyle(
                 color: Color(0xFFA7A7A7),
                 fontSize: 10,
                 fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 9.0),
-          const Text(
-            '°C',
-            //$hourlyForecastTemperature
-            style: TextStyle(
+          Text(
+            temperature,
+            style: const TextStyle(
                 color: Colors.black,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600),

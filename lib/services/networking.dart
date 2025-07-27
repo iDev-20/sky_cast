@@ -5,9 +5,10 @@ import 'dart:convert';
 
 class NetworkHelper {
   NetworkHelper(
-      {required this.url, required this.errorMessage});
+      {required this.url, required this.api, required this.errorMessage});
 
   final String url;
+  final String api;
   final String errorMessage;
 
   Future getData() async {
@@ -19,7 +20,7 @@ class NetworkHelper {
 
         return jsonDecode(data);
       } else {
-        print('Error: Received status code ${response.statusCode}');
+        print('Error: Received status code ${response.statusCode} for $api');
         return null;
       }
     } catch (e) {

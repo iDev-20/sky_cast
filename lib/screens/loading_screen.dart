@@ -22,11 +22,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
     getLocationData();
   }
 
-
   void getLocationData() async {
     try {
       var weatherData = await WeatherViewModel().getLocationWeather();
       List<Weather> cities = await getCitiesData();
+      var hourlyForecast = await WeatherViewModel().getHourlyForecast();
 
       // String cityTimeZone = 'Africa/Accra';
       // var timeData = await TimeModel().getCityTime(cityTimeZone);
@@ -34,8 +34,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              HomePage(locationWeather: weatherData, cities: cities),
+          builder: (context) => HomePage(
+            locationWeather: weatherData,
+            cities: cities,
+            hourlyForecast: hourlyForecast,
+          ),
         ),
       );
     } catch (e) {
